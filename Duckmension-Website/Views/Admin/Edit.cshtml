@@ -1,0 +1,30 @@
+﻿@model Duckmension_Website.Models.ViewModels.EditUserRoleViewModel
+ 
+@{
+    ViewData["Title"] = "Role change";
+}
+ 
+<h1>@ViewData["Title"]</h1>
+ 
+<div class="mb-3">
+    <strong>User:</strong> @Model.Email
+</div>
+ 
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="UserId" />
+ 
+    <div class="mb-3">
+        <label class="form-label">Role</label>
+        <select class="form-select" asp-for="SelectedRole"
+                asp-items="@(new SelectList(Model.Roles))">
+        </select>
+    </div>
+ 
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+ 
+    <div class="text-danger mt-3">
+        @Html.ValidationSummary()
+    </div>
+</form>

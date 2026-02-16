@@ -20,28 +20,31 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Highlights</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="UserFind">Find a User</a>
                         </li>
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
                             if (User.IsInRole("Owner"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Owner" asp-action="Index">Owner</a>
+                                    <a class="nav-link text-dark" asp-controller="Owner" asp-action="Index">Owner Panel</a>
                                 </li>
                             }
                             if (User.IsInRole("Admin") || User.IsInRole("Owner"))
                             {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Admin</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Admin Panel</a></li>
                             }
                             if (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Owner"))
                             {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="User" asp-action="Index">User</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="User" asp-action="Index">Your Account</a></li>
                             }
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
