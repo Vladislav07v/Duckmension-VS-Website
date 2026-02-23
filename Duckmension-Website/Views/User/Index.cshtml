@@ -1,2 +1,36 @@
-﻿<h1>User space</h1>
-<p>That's where you'll be able to look at your account.</p>
+﻿@model Duckmension_Website.Models.UserProfile
+<h1>User space</h1>
+@{
+    ViewData["Title"] = "My profile";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-success">@TempData["msg"]</div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="mb-3">
+        <label class="form-label">Cookies collected (total):</label>
+        <input class="form-label" asp-for="CookieCount" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Currently worn hat:</label>
+        <input class="form-label" asp-for="CurrentlyWornHat" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Owned hats:</label>
+        <input class="form-label" asp-for="OwnedHats" />
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

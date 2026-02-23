@@ -1,27 +1,7 @@
 ﻿@{
-    ViewData["Title"] = "Role management";
+    ViewData["Title"] = "User management";
 }
  
 <h1>@ViewData["Title"]</h1>
  
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Role</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var u in Model)
-        {
-            <tr>
-                <td>@u.Email</td>
-                <td>@(u.Role ?? "(none)")</td>
-                <td>
-                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-routeid="@u.UserId">Edit</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<p>TODO: Add the custom user search function and duck preview.</p>

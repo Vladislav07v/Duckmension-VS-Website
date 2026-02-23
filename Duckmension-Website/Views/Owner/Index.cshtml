@@ -21,7 +21,7 @@
                 <td>@u.Email</td>
                 <td>@(u.Role ?? "(none)")</td>
                 <td>
-                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-routeid="@u.UserId">Edit</a>
+                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@u.UserId">Edit</a>
                 </td>
             </tr>
         }
