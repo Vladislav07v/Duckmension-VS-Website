@@ -27,9 +27,9 @@ public class UserController : Controller
         var profile = await _db.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         if (profile == null)
         {
-            profile = new UserProfile { UserId = userId, CookieCount = 8, CurrentlyWornHat = 1, OwnedHats = {1,2,3,4,5} };
-            _db.UserProfiles.Add(profile);
-            await _db.SaveChangesAsync();
+            //profile = new UserProfile { UserId = userId, CookieCount = 8, CurrentlyWornHat = 1, OwnedHats = {1,2,3,4,5} };
+            //_db.UserProfiles.Add(profile);
+            //await _db.SaveChangesAsync();
         }
 
         return View(profile);
