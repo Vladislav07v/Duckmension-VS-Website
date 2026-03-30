@@ -27,10 +27,21 @@ public class UserController : Controller
         var profile = await _db.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         if (profile == null)
         {
-            //profile = new UserProfile { UserId = userId, CookieCount = 8, CurrentlyWornHat = 1, OwnedHats = {1,2,3,4,5} };
-            //_db.UserProfiles.Add(profile);
-            //await _db.SaveChangesAsync();
+            // create a default profile for new users to avoid null reference in the view
+            profile = new UserProfile
+            {
+                UserId = userId,
+                CookieCount = 0,
+                CurrentlyWornHat = 0,
+                OwnedHats = new List<int>()
+            };
+            _db.UserProfiles.Add(profile);
+            await _db.SaveChangesAsync();
         }
+
+        // ensure the Identity user is loaded so views can show the username
+        var identityUser = await _userManager.FindByIdAsync(userId);
+        profile.User = identityUser;
 
         return View(profile);
     }

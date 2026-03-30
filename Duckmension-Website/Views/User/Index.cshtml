@@ -1,36 +1,42 @@
 ﻿@model Duckmension_Website.Models.UserProfile
-<h1>User space</h1>
 @{
     ViewData["Title"] = "My profile";
 }
+<body>
+    <h1 class="display-4 text-center">@ViewData["Title"]</h1>
 
-<h1>@ViewData["Title"]</h1>
+    @if (TempData["msg"] != null)
+    {
+        <div class="alert alert-success">@TempData["msg"]</div>
+    }
 
-@if (TempData["msg"] != null)
-{
-    <div class="alert alert-success">@TempData["msg"]</div>
-}
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserId" />
 
-<form method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="UserId" />
-
-    <div class="mb-3">
-        <label class="form-label">Cookies collected (total):</label>
-        <input class="form-label" asp-for="CookieCount" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Currently worn hat:</label>
-        <input class="form-label" asp-for="CurrentlyWornHat" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Owned hats:</label>
-        <input class="form-label" asp-for="OwnedHats" />
-    </div>
-</form>
-
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-pills card-header-pills d-flex w-100">
+                    <li class="nav-item">
+                        <a class="nav-link bg-secondary flex-fill" href="#">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link bg-secondary flex-fill" href="#">Settings</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body text-start">
+                <div class="row">
+                    <img src="duck.png" class="card-img-left rounded border border-secondary img-fluid col-md-4" width="256" height="256" alt="That's you!">
+                    <div class="col-md-8">
+                        <h3>@Model?.User?.UserName</h3>
+                        <h5 class="card-text"><img src="cookie.png" />X </h5>
+                        <h5 class="card-text">Hats owned x </h5>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
