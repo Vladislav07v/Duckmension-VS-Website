@@ -1,18 +1,146 @@
 ﻿@{
     ViewData["Title"] = "Find a User";
 }
+@model IEnumerable<Duckmension_Website.Models.ViewModels.UserProfileListItemViewModel>
+@functions {
+    private string GetName(Duckmension_Website.Models.ViewModels.UserProfileListItemViewModel u)
+    {
+        return u?.UserName ?? "Unknown";
+    }
+
+    private int GetInt(Duckmension_Website.Models.ViewModels.UserProfileListItemViewModel u, string prop)
+    {
+        if (u == null) return 0;
+        return prop switch
+        {
+            "Cookies" => u.Cookies,
+            "Hats" => u.Hats,
+            _ => 0
+        };
+    }
+}
 <body>
-    <div>
+    <div class="container py-4">
         <h1 class="display-4 text-center">@ViewData["Title"]</h1>
 
-        <div class="card" style="width: 18rem;">
-            <img src="duk.png" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Name</h5>
-                <p class="card-text">Cookies- </p>
-                <p class="card-text">Hats- </p>
+        <form id="userFilterForm" class="row g-2 align-items-center my-4" onsubmit="return false;">
+            <div class="col-auto">
+                <input type="search" id="nameFilter" class="form-control" placeholder="Search by name" />
             </div>
+            <div class="col-auto">
+                <select id="sortSelect" class="form-select">
+                    <option value="name-asc">Name (A → Z)</option>
+                    <option value="name-desc">Name (Z → A)</option>
+                    <option value="cookies-asc">Cookies (ascending)</option>
+                    <option value="cookies-desc">Cookies (descending)</option>
+                    <option value="hats-asc">Hats (ascending)</option>
+                    <option value="hats-desc">Hats (descending)</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button id="clearBtn" class="btn btn-outline-secondary">Clear</button>
+            </div>
+        </form>
+
+        <div id="userList" class="row row-cols-1 row-cols-md-3 g-4">
+            @{
+                if (Model == null || !Model.Any())
+                {
+                    <div class="col-12">
+                        <div class="alert alert-info">No registered users found.</div>
+                    </div>
+                }
+                else
+                {
+                    foreach (var u in Model)
+                    {
+                        var name = GetName(u);
+                        var cookies = GetInt(u, "Cookies");
+                        var hats = GetInt(u, "Hats");
+            <text>
+            <div class="col user-card" data-name="@name" data-cookies="@cookies" data-hats="@hats">
+                <div class="card h-100">
+                    <img src="duk.png" class="card-img-top img-fluid" alt="@name">
+                    <div class="card-body">
+                        <h5 class="card-title">@name</h5>
+                        <p class="card-text"> <img src="~/cookie.svg" width="24" alt="cookie" /> <span class="cookie-count">@cookies</span> </p>
+                        <p class="card-text">Hats <span class="hat-count">@hats</span></p>
+                    </div>
+                </div>
+            </div>
+            </text>
+                    }
+                }
+            }
         </div>
     </div>
 
+    <script>
+        (function () {
+            const nameInput = document.getElementById('nameFilter');
+            const sortSelect = document.getElementById('sortSelect');
+            const userList = document.getElementById('userList');
+            const clearBtn = document.getElementById('clearBtn');
+
+            function parseIntSafe(val) {
+                const n = parseInt(val, 10);
+                return Number.isFinite(n) ? n : 0;
+            }
+
+            function getCards() {
+                return Array.from(userList.querySelectorAll('.user-card'));
+            }
+
+            function applyFilterAndSort() {
+                const filter = nameInput.value.trim().toLowerCase();
+                const sort = sortSelect.value;
+
+                let cards = getCards();
+
+                // Filter
+                cards.forEach(card => {
+                    const name = (card.getAttribute('data-name') || '').toLowerCase();
+                    const match = !filter || name.includes(filter);
+                    card.style.display = match ? '' : 'none';
+                });
+
+                // Sort visible cards
+                const visible = cards.filter(c => c.style.display !== 'none');
+
+                visible.sort((a, b) => {
+                    const an = (a.getAttribute('data-name') || '').toLowerCase();
+                    const bn = (b.getAttribute('data-name') || '').toLowerCase();
+                    const ac = parseIntSafe(a.getAttribute('data-cookies'));
+                    const bc = parseIntSafe(b.getAttribute('data-cookies'));
+                    const ah = parseIntSafe(a.getAttribute('data-hats'));
+                    const bh = parseIntSafe(b.getAttribute('data-hats'));
+
+                    switch (sort) {
+                        case 'name-asc': return an.localeCompare(bn);
+                        case 'name-desc': return bn.localeCompare(an);
+                        case 'cookies-asc': return ac - bc;
+                        case 'cookies-desc': return bc - ac;
+                        case 'hats-asc': return ah - bh;
+                        case 'hats-desc': return bh - ah;
+                        default: return 0;
+                    }
+                });
+
+                // Re-append in sorted order
+                visible.forEach(card => userList.appendChild(card));
+            }
+
+            nameInput.addEventListener('input', applyFilterAndSort);
+            sortSelect.addEventListener('change', applyFilterAndSort);
+            clearBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                nameInput.value = '';
+                sortSelect.value = 'name-asc';
+                applyFilterAndSort();
+            });
+
+            // Initial sort
+            applyFilterAndSort();
+        })();
+    </script>
 </body>

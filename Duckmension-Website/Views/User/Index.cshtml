@@ -9,34 +9,84 @@
     {
         <div class="alert alert-success">@TempData["msg"]</div>
     }
-
-    <form method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="UserId" />
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["error"]</div>
+    }
 
         <div class="card">
-            <div class="card-header">
-                <ul class="nav nav-pills card-header-pills d-flex w-100">
-                    <li class="nav-item">
-                        <a class="nav-link bg-secondary flex-fill" href="#">Profile</a>
+            <div class="card-header p-0">
+                <!-- Bootstrap tabs in card header -->
+                <ul class="nav nav-tabs card-header-tabs" role="tablist" style="padding: 8px">
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link bg-secondary flex-fill" href="#">Settings</a>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
                     </li>
                 </ul>
             </div>
             <div class="card-body text-start">
-                <div class="row">
-                    <img src="duck.png" class="card-img-left rounded border border-secondary img-fluid col-md-4" width="256" height="256" alt="That's you!">
-                    <div class="col-md-8">
-                        <h3>@Model?.User?.UserName</h3>
-                        <h5 class="card-text"><img src="cookie.png" />X </h5>
-                        <h5 class="card-text">Hats owned x </h5>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="duck.gif" class="card-img-left rounded border border-secondary img-fluid" width="256" height="auto" alt="That's you!">
+                            </div>
+                            <div class="col-md-8">
+                                <h3>@Model?.User?.UserName</h3>
+                                <h5 class="card-text"><img src="cookie.svg" width="64" height="auto" /> X </h5>
+                                <h5 class="card-text">Hats X </h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                        <!-- Change display name form -->
+                        <form asp-controller="User" asp-action="UpdateProfile" method="post" class="mb-3">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="UserId" value="@Model?.UserId" />
+                            <div class="mb-3">
+                                <label for="displayName" class="form-label">Display name</label>
+                                <input type="text" class="form-control" id="displayName" name="DisplayName" value="@Model?.User?.UserName" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save name</button>
+                        </form>
+
+                        <!-- Change password form -->
+                        <form asp-controller="User" asp-action="ChangePassword" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="UserId" value="@Model?.UserId" />
+                            <div class="mb-3">
+                                <label for="oldPassword" class="form-label">Current password</label>
+                                <input type="password" class="form-control" id="oldPassword" name="OldPassword" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New password</label>
+                                <input type="password" class="form-control" id="newPassword" name="NewPassword" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm new password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" />
+                            </div>
+                            <button type="submit" class="btn btn-warning">Change password</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </form>
 </body>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    @if (TempData["openTab"] != null && TempData["openTab"].ToString() == "settings")
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var settingsTab = document.querySelector('#settings-tab');
+                if (settingsTab) {
+                    var tab = new bootstrap.Tab(settingsTab);
+                    tab.show();
+                }
+            });
+        </script>
+    }
 }

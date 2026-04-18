@@ -106,8 +106,8 @@
                 <img src="~/duck.svg"
                      class="d-block mx-lg-auto img-fluid"
                      alt="Kukki"
-                     width="700"
-                     height="500"
+                     width="480"
+                     height="854"
                      loading="lazy" />
             </div>
             <div class="col-lg-6">
@@ -122,8 +122,8 @@
     </div>
     <div class="b-example-divider"></div>
     <div class="container my-5">
-        <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
-            <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+        <div class="row p-3 pb-0 pe-lg-0 pt-lg-0 align-items-center rounded-3 border shadow-lg">
+            <div class="col-lg-6 p-3 p-lg-5 pt-lg-3">
                 <h1 class="display-4 fw-bold lh-1 text-body-emphasis">
                     Full Run
                 </h1>
@@ -134,22 +134,20 @@
                     try not to fail several time in a row!
                 </p>
             </div>
-            <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
-                <img class="rounded-lg-3"
-                     src="bootstrap-docs.png"
-                     alt=""
-                     width="720" />
+            <div class="col-lg-5 offset-lg-1 d-flex align-items-center justify-content-center p-2 shadow-lg rounded-lg-3">
+                <img class="img-fluid"
+                     src="~/screenshot1.png"
+                     alt="Full run" />
             </div>
         </div>
     </div>
     <div class="b-example-divider"></div>
     <div class="container my-5">
-        <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
-            <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
-                <img class="rounded-lg-3"
-                     src="bootstrap-docs.png"
-                     alt=""
-                     width="720" />
+        <div class="row p-0 pb-0 pe-lg-0 pt-lg-0 align-items-center rounded-3 border shadow-lg">
+            <div class="col-lg-4 offset-lg-1 d-flex align-items-center justify-content-center p-2 shadow-lg rounded-lg-3">
+                <img class="img-fluid"
+                     src="~/screenshot1.png"
+                     alt="Timed run" />
             </div>
             <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
                 <h1 class="display-4 fw-bold lh-1 text-body-emphasis">
@@ -179,10 +177,7 @@
                 </p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
                     <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">
-                        Primary button
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4">
-                        Secondary
+                        Try them out!
                     </button>
                 </div>
             </div>
@@ -213,36 +208,15 @@
                 </div>
                 <div class="col-md-10 mx-auto col-lg-5">
                     <form asp-area="Identity" asp-page="/Account/Register" method="post" class="p-4 p-md-5 border rounded-3 bg-body-tertiary" id="homeRegisterForm">
-                        @Html.AntiForgeryToken()
-                        <div class="form-floating mb-3">
-                            <input name="Input.Email" type="email"
-                                   class="form-control"
-                                   id="floatingInput"
-                                   placeholder="name@example.com" required />
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input name="Input.Password" type="password"
-                                   class="form-control"
-                                   id="floatingPassword"
-                                   placeholder="Password" required />
-                            <label for="floatingPassword">Password</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input name="Input.ConfirmPassword" type="password"
-                                   class="form-control"
-                                   id="floatingConfirm"
-                                   placeholder="Password" required />
-                            <label for="floatingConfirm">Confirm Password</label>
-                        </div>
-                        <div class="checkbox mb-3">
-                            <label>
-                                <input type="checkbox" value="remember-me" /> Remember me
-                            </label>
-                        </div>
-                        <button class="w-100 btn btn-lg btn-primary" type="submit">
-                            Register
-                        </button>
+                        @if (!(User.Identity?.IsAuthenticated ?? false))
+                         {
+                            <a class="btn btn-primary btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
+                            <a class="btn btn-primary btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
+                         }
+                        else
+                        {
+                            <a class="btn btn-primary btn-lg px-2 me-md-2" asp-area="Identity">YOU DON'T NEED IT</a>
+                        }
                         <hr class="my-4" />
                         <small class="text-body-secondary">By clicking Register, you agree to the terms of use.</small>
                     </form>

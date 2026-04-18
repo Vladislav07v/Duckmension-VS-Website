@@ -10,10 +10,9 @@
 </head>
 <style>
     .yellow-strip-container {
-        width: 100%;
-        display: flex;
+        /* shrink to fit the buttons instead of filling the whole page */
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
         gap: .5rem;
         padding: .25rem;
         height: 64px;
@@ -84,7 +83,7 @@
         </nav>
         /*@   
     </header>
-	<img src="~/title_temp.png"
+	<img src="~/logo3d.png"
 		 class="d-block mx-lg-auto img-fluid"
 		 alt="title"
 		 width="1008"
@@ -92,32 +91,77 @@
 		 loading="lazy" />
 
 	<br />
-		<div class="yellow-strip-container gap-2 d-md-flex justify-content-center">
-			<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
-			<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">UPDATES</a>
-			<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
-			<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
-			@if (User.Identity?.IsAuthenticated ?? false)
-			{
-				if (User.IsInRole("Owner"))
-				{
-					<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
-				}
-				if (User.IsInRole("Admin") || User.IsInRole("Owner"))
-				{
-					<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
-				}
-			}
-			@if (!(User.Identity?.IsAuthenticated ?? false))
-			{
-				<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
-				<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
-			}
-            else
-            {
-            <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
-            }
-		</div>
+     <div class="d-flex justify-content-center">
+            <!-- Desktop / wide screens: shrink-to-fit yellow strip containing buttons -->
+            <div class="yellow-strip-container gap-2 d-none d-md-inline-flex">
+                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
+                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">UPDATES</a>
+                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
+                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    if (User.IsInRole("Owner"))
+                    {
+                        <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
+                    }
+                    if (User.IsInRole("Admin") || User.IsInRole("Owner"))
+                    {
+                        <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
+                    }
+                }
+                @if (!(User.Identity?.IsAuthenticated ?? false))
+                {
+                    <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
+                    <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
+                }
+                else
+                {
+                <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
+                }
+            </div>
+
+        </div>
+
+        <!-- Mobile: accordion that houses the same buttons (visible only on small screens) -->
+        <div class="d-md-none container mt-2">
+        <div class="accordion" id="mobileMenuAccordion" >
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingMobileMenu">
+                    <button class="accordion-button collapsed" style="background-color:#ffc107"  type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-expanded="false" aria-controls="mobileMenu">
+                            Menu
+                        </button>
+                    </h2>
+                <div id="mobileMenu" class="accordion-collapse collapse" style="background-color:#ffc107"  aria-labelledby="headingMobileMenu" data-bs-parent="#mobileMenuAccordion">
+                        <div class="accordion-body p-2">
+                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
+                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="Index">UPDATES</a>
+                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
+                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
+                            @if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                                if (User.IsInRole("Owner"))
+                                {
+                                    <a class="btn btn-warning w-100 mb-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
+                                }
+                                if (User.IsInRole("Admin") || User.IsInRole("Owner"))
+                                {
+                                    <a class="btn btn-warning w-100 mb-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
+                                }
+                            }
+                            @if (!(User.Identity?.IsAuthenticated ?? false))
+                            {
+                                <a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
+                                <a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 	<br />
 	<div class="container">
