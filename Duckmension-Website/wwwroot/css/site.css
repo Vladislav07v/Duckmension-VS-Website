@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* When Bootstrap's dark theme is active, force the page background to the requested color */
+[data-bs-theme="dark"] body {
+    background-color: #432B43 !important;
+}

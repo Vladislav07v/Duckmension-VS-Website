@@ -16,6 +16,6 @@ public class UserProfile
     [Range(0, 9)]
     public int CurrentlyWornHat { get; set; }
 
-    public List<int> OwnedHats { get; set; }
+    public List<int> OwnedHats { get; set; } = new List<int>();
 }
 
