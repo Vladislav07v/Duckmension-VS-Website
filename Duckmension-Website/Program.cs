@@ -56,6 +56,8 @@ namespace Duckmension_Website
             }
             await IdentitySeed.SeedAsync(app.Services);
             await Duckmension_Website.Data.IdentitySeed.SeedAsync(app.Services);
+            // run username migration for existing users if needed
+            await Duckmension_Website.Data.IdentitySeed.MigrateUsernamesAsync(app.Services);
 
             app.Run();
         }

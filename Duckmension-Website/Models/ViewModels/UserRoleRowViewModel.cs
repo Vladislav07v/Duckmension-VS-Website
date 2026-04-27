@@ -4,6 +4,6 @@
     {
         public string UserId { get; set; } = "";
         public string Email { get; set; } = "";
-        public string? Role { get; set; }  // текущата роля (или null)}
+        public string? Role { get; set; } = "User"; // текущата роля (или null)}
     }
 }

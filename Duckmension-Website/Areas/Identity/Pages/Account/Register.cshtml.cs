@@ -79,6 +79,12 @@ namespace Duckmension_Website.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
+            [Required(ErrorMessage = "Please choose a username.")]
+            [StringLength(20, ErrorMessage = "The {0} must be between {2} and {1} characters long.", MinimumLength = 3)]
+            [RegularExpression("^[a-zA-Z0-9_-]+$", ErrorMessage = "Username may only contain letters, numbers, underscores and hyphens.")]
+            [Display(Name = "Username")]
+            public string Username { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -110,11 +116,21 @@ namespace Duckmension_Website.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            // ensure username is unique
+            if (!string.IsNullOrWhiteSpace(Input.Username))
+            {
+                var existing = await _userManager.FindByNameAsync(Input.Username);
+                if (existing != null)
+                {
+                    ModelState.AddModelError("Input.Username", "That username is already taken. Please choose another.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
