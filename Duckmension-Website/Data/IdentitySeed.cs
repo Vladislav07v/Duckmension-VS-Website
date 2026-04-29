@@ -4,8 +4,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Duckmension_Website.Data
 {
+    /// <summary>
+    /// Handles seeding of initial identity data (roles and default users) and username migration for existing users.
+    /// </summary>
     public class IdentitySeed
     {
+        /// <summary>
+        /// Seeds the database with initial roles (Owner, Admin, User) and default test users for each role.
+        /// This is called during application startup to ensure required roles and users exist.
+        /// </summary>
         public static async Task SeedAsync(IServiceProvider services)
         {
             using var scope = services.CreateScope();
@@ -15,22 +22,26 @@ namespace Duckmension_Website.Data
             var userManager =
                 scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
+            // Define the application roles: Owner manages the app, Admin manages content, User is a regular player
             string[] roles = { "Owner", "Admin", "User" };
 
+            // Create roles if they don't already exist
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
+
+            // Create or ensure default test users exist with their respective roles
             await EnsureUserWithRole(userManager, "owner@email.local", "Owner123!", "Owner");
             await EnsureUserWithRole(userManager, "admin@email.local", "Admin123!", "Admin");
             await EnsureUserWithRole(userManager, "user@email.local", "User123!", "User");
         }
 
         /// <summary>
-        /// Ensure existing users have a separate username set. If a user's UserName is empty or equals their email,
-        /// this will generate a username from the email local-part and make it unique if necessary.
-        /// This method is safe to run multiple times.
+        /// Ensures all existing users have a unique username separate from their email.
+        /// If a user's UserName is empty or matches their email, generates a sanitized username from the email.
+        /// This method is idempotent and can be safely run multiple times.
         /// </summary>
         public static async Task MigrateUsernamesAsync(IServiceProvider services)
         {
@@ -43,13 +54,17 @@ namespace Duckmension_Website.Data
             {
                 try
                 {
+                    // Check if user needs a username (empty or same as email)
                     if (string.IsNullOrWhiteSpace(user.UserName) || string.Equals(user.UserName, user.Email, StringComparison.OrdinalIgnoreCase))
                     {
+                        // Extract the local part of the email (before @) as the base username
                         var baseName = (user.Email ?? "user").Split('@')[0];
-                        // sanitize
+
+                        // Remove invalid characters from the username (only allow letters, digits, underscore, hyphen)
                         baseName = new string(baseName.Where(c => char.IsLetterOrDigit(c) || c == '_' || c == '-').ToArray()).ToLowerInvariant();
                         if (string.IsNullOrWhiteSpace(baseName)) baseName = "user";
 
+                        // Ensure the username is unique by appending a number if necessary
                         var candidate = baseName;
                         var i = 1;
                         while (await userManager.FindByNameAsync(candidate) != null)
@@ -58,6 +73,7 @@ namespace Duckmension_Website.Data
                             i++;
                         }
 
+                        // Update the user with the new username
                         var setResult = await userManager.SetUserNameAsync(user, candidate);
                         if (!setResult.Succeeded)
                         {
@@ -76,6 +92,14 @@ namespace Duckmension_Website.Data
             }
         }
 
+        /// <summary>
+        /// Helper method to ensure a user exists with the specified email, password, and role.
+        /// Creates the user if it doesn't exist, and assigns the role if not already assigned.
+        /// </summary>
+        /// <param name="userManager">The UserManager service for managing users</param>
+        /// <param name="email">The email address of the user</param>
+        /// <param name="password">The password for the new user</param>
+        /// <param name="role">The role to assign to the user</param>
         private static async Task EnsureUserWithRole(
                 UserManager<IdentityUser> userManager,
                 string email,
@@ -85,6 +109,7 @@ namespace Duckmension_Website.Data
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
+                // Create new user if doesn't exist
                 user = new IdentityUser
                 {
                     UserName = email,
@@ -98,6 +123,8 @@ namespace Duckmension_Website.Data
                     throw new Exception($"Cannot create user {email}: {errors}");
                 }
             }
+
+            // Assign role to user if not already assigned
             if (!await userManager.IsInRoleAsync(user, role))
                 await userManager.AddToRoleAsync(user, role);
         }

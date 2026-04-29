@@ -5,12 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Duckmension_Website.Controllers;
 
+/// <summary>
+/// Owner-level administrative controller for complete system management.
+/// Restricted to users with the Owner role only.
+/// Provides full access to user management and role assignment capabilities.
+/// </summary>
 [Authorize(Roles = "Owner")]
 public class OwnerController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
+    /// <summary>
+    /// Initializes a new instance of the OwnerController with required dependency services.
+    /// </summary>
     public OwnerController(UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
@@ -18,12 +26,16 @@ public class OwnerController : Controller
         _roleManager = roleManager;
     }
 
-    // 3.1. Списък 
+    /// <summary>
+    /// Displays a list of all users in the system with their current roles.
+    /// Owner has full visibility and control over all user accounts.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var users = _userManager.Users.ToList();
         var model = new List<UserRoleRowViewModel>();
 
+        // Build model with each user's information and their primary role
         foreach (var u in users)
         {
             var roles = await _userManager.GetRolesAsync(u);
@@ -31,14 +43,18 @@ public class OwnerController : Controller
             {
                 UserId = u.Id,
                 Email = u.Email ?? u.UserName ?? "(no email)",
-                Role = roles.FirstOrDefault() // приемаме 1 основна роля 
+                Role = roles.FirstOrDefault() // Display primary role (assuming one main role per user)
             });
         }
 
         return View(model);
     }
 
-    // 3.2. Edit (GET) 
+    /// <summary>
+    /// Displays the edit form for changing a user's role assignment.
+    /// Owner can modify any user's role including admins.
+    /// GET request to load the user and available roles.
+    /// </summary>
     public async Task<IActionResult> Edit(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
@@ -58,7 +74,11 @@ public class OwnerController : Controller
         return View(model);
     }
 
-    // 3.3. Edit (POST) 
+    /// <summary>
+    /// Processes the role assignment change for a user.
+    /// Owner can reassign any user to any role with a safety check.
+    /// POST request to update the user's primary role in the system.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditUserRoleViewModel model)
@@ -66,7 +86,7 @@ public class OwnerController : Controller
         var user = await _userManager.FindByIdAsync(model.UserId);
         if (user == null) return NotFound();
 
-        // По избор: забрана Owner да сваля собствената си роля 
+        // Security check: Prevent the current Owner from removing their own Owner role
         var currentUserId = _userManager.GetUserId(User);
         if (currentUserId == user.Id && model.SelectedRole != "Owner")
         {
@@ -81,7 +101,7 @@ public class OwnerController : Controller
 
         var currentRoles = await _userManager.GetRolesAsync(user);
 
-        // Премахваме всички роли и добавяме избраната (една основна роля) 
+        // Remove all existing roles and assign the new primary role
         if (currentRoles.Any())
         {
             await _userManager.RemoveFromRolesAsync(user, currentRoles);

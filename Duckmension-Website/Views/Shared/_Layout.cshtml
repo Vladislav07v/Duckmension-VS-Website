@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@* Master layout page for the entire application
+	Includes navigation, header/footer, and theme toggle
+	Responsive design with desktop (yellow strip) and mobile (accordion) menus *@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -9,80 +12,45 @@
 	<link rel="stylesheet" href="~/Duckmension_Website.styles.css" asp-append-version="true" />
 </head>
 <style>
-    .yellow-strip-container {
-        /* shrink to fit the buttons instead of filling the whole page */
-        display: inline-flex;
-        align-items: center;
-        gap: .5rem;
-        padding: .25rem;
-        height: 64px;
-        background: #ffc107 100%;
-        border-radius: .5rem;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08) inset;
-    }
+	@* Yellow navigation strip styling for desktop navigation buttons *@
+	.yellow-strip-container {
+		/* Shrink to fit buttons instead of filling the whole page width */
+		display: inline-flex;
+		align-items: center;
+		gap: .5rem;
+		padding: .25rem;
+		height: 64px;
+		background: #ffc107 100%;
+		border-radius: .5rem;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.08) inset;
+	}
 
-    .yellow-strip-container .btn {
-        background: transparent !important;
-        border: none !important;
-        color: #1a1a1a !important;
-        height: 100%;
-        padding: 0 1.25rem;
-        border-radius: 0 !important;
-        display: inline-flex;
-        align-items: center;
-    }
-    .white-gradient {
-        background-image: linear-gradient(to bottom, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,1) 100%);
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-blend-mode: overlay;
-    }
+	@* Yellow strip button styling *@
+	.yellow-strip-container .btn {
+		background: transparent !important;
+		border: none !important;
+		color: #1a1a1a !important;
+		height: 100%;
+		padding: 0 1.25rem;
+		border-radius: 0 !important;
+		display: inline-flex;
+		align-items: center;
+	}
+
+	@* White gradient overlay effect on background *@
+	.white-gradient {
+		background-image: linear-gradient(to bottom, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,1) 100%);
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+		background-blend-mode: overlay;
+	}
 </style>
 <body class="bg-info white-gradient ">
 	<header>
-		@*/
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Duckmension_Website</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Highlights</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="UserFind">Find a User</a>
-                        </li>
-                        @if (User.Identity?.IsAuthenticated ?? false)
-                        {
-                            if (User.IsInRole("Owner"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Owner" asp-action="Index">Owner Panel</a>
-                                </li>
-                            }
-                            if (User.IsInRole("Admin") || User.IsInRole("Owner"))
-                            {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Admin Panel</a></li>
-                            }
-                            if (User.IsInRole("User") || User.IsInRole("Admin") || User.IsInRole("Owner"))
-                            {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="User" asp-action="Index">Your Account</a></li>
-                            }
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-        /*@   
-    </header>
+		@* Header area for future enhancements *@
+	</header>
+
+	@* Main Duckmension VS logo *@
 	<img src="~/logo3d.png"
 		 class="d-block mx-lg-auto img-fluid"
 		 alt="title"
@@ -91,105 +59,120 @@
 		 loading="lazy" />
 
 	<br />
-     <div class="d-flex justify-content-center">
-            <!-- Desktop / wide screens: shrink-to-fit yellow strip containing buttons -->
-            <div class="yellow-strip-container gap-2 d-none d-md-inline-flex">
-                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
-                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">UPDATES</a>
-                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
-                <a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
-                @if (User.Identity?.IsAuthenticated ?? false)
-                {
-                    if (User.IsInRole("Owner"))
-                    {
-                        <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
-                    }
-                    if (User.IsInRole("Admin") || User.IsInRole("Owner"))
-                    {
-                        <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
-                    }
-                }
-                @if (!(User.Identity?.IsAuthenticated ?? false))
-                {
-                    <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
-                    <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
-                }
-                else
-                {
-                <a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
-                }
-            </div>
+	 <div class="d-flex justify-content-center">
+			@* Desktop / wide screens: Compact yellow strip containing main navigation buttons *@
+			<div class="yellow-strip-container gap-2 d-none d-md-inline-flex">
+				<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
+				<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="Update">UPDATES</a>
+				<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
+				<a class="btn btn-lg px-2 me-md-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
 
-        </div>
+				@* Show administrative panels for authenticated users with appropriate roles *@
+				@if (User.Identity?.IsAuthenticated ?? false)
+				{
+					if (User.IsInRole("Owner"))
+					{
+						<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
+					}
+					if (User.IsInRole("Admin") || User.IsInRole("Owner"))
+					{
+						<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
+					}
+				}
 
-        <!-- Mobile: accordion that houses the same buttons (visible only on small screens) -->
-        <div class="d-md-none container mt-2">
-        <div class="accordion" id="mobileMenuAccordion" >
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingMobileMenu">
-                    <button class="accordion-button collapsed" style="background-color:#ffc107"  type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-expanded="false" aria-controls="mobileMenu">
-                            Menu
-                        </button>
-                    </h2>
-                <div id="mobileMenu" class="accordion-collapse collapse" style="background-color:#ffc107"  aria-labelledby="headingMobileMenu" data-bs-parent="#mobileMenuAccordion">
-                        <div class="accordion-body p-2">
-                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
-                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="Index">UPDATES</a>
-                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
-                            <a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
-                            @if (User.Identity?.IsAuthenticated ?? false)
-                            {
-                                if (User.IsInRole("Owner"))
-                                {
-                                    <a class="btn btn-warning w-100 mb-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
-                                }
-                                if (User.IsInRole("Admin") || User.IsInRole("Owner"))
-                                {
-                                    <a class="btn btn-warning w-100 mb-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
-                                }
-                            }
-                            @if (!(User.Identity?.IsAuthenticated ?? false))
-                            {
-                                <a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
-                                <a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+				@* Show login/register or logout based on authentication status *@
+				@if (!(User.Identity?.IsAuthenticated ?? false))
+				{
+					<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
+					<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
+				}
+				else
+				{
+				<a class="btn btn-warning btn-lg px-2 me-md-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
+				}
+			</div>
+
+		</div>
+
+		@* Mobile: Collapsible accordion menu visible only on small screens *@
+		<div class="d-md-none container mt-2">
+		<div class="accordion" id="mobileMenuAccordion" >
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingMobileMenu">
+					<button class="accordion-button collapsed" style="background-color:#ffc107"  type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-expanded="false" aria-controls="mobileMenu">
+							Menu
+						</button>
+					</h2>
+				<div id="mobileMenu" class="accordion-collapse collapse" style="background-color:#ffc107"  aria-labelledby="headingMobileMenu" data-bs-parent="#mobileMenuAccordion">
+						<div class="accordion-body p-2">
+							<a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="Index">HIGHLIGHTS</a>
+							<a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="Update">UPDATES</a>
+							<a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="Home" asp-action="UserFind">FIND A USER</a>
+							<a class="btn btn-lg w-100 mb-2" asp-area="" asp-controller="User" asp-action="Index">YOUR ACCOUNT</a>
+
+							@* Show administrative panels on mobile for authenticated users *@
+							@if (User.Identity?.IsAuthenticated ?? false)
+							{
+								if (User.IsInRole("Owner"))
+								{
+									<a class="btn btn-warning w-100 mb-2" asp-area="" asp-controller="Owner" asp-action="Index">OWNER PANEL</a>
+								}
+								if (User.IsInRole("Admin") || User.IsInRole("Owner"))
+								{
+									<a class="btn btn-warning w-100 mb-2" asp-area="" asp-controller="Admin" asp-action="Index">ADMIN PANEL</a>
+								}
+							}
+
+							@* Show login/register or logout on mobile *@
+							@if (!(User.Identity?.IsAuthenticated ?? false))
+							{
+								<a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Login">LOGIN</a>
+								<a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Register">REGISTER</a>
+							}
+							else
+							{
+								<a class="btn btn-warning w-100 mb-2" asp-area="Identity" asp-page="/Account/Logout">LOGOUT</a>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 	<br />
 	<div class="container">
+		@* Main content area - rendered from individual pages *@
 		<main role="main" class="pb-3">
 			@RenderBody()
 		</main>
 	</div>
 
+	@* Footer with copyright information *@
 	<footer class="border-top footer text-muted">
 		<div class="container">
 			&copy; 2026 - Duckmension_Website. All rights reserved</a>
 		</div>
 	</footer>
+
+	@* JavaScript libraries *@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	@* Additional scripts from child pages *@
 	@await RenderSectionAsync("Scripts", required: false)
-    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-        <button class="btn align-items-center"
-                id="bd-theme"
-                type="button"
-                aria-label="Toggle theme (auto)">
-            <img src="~/duk.png"
-                 alt="Change theme?"
-                 width="75"
-                 height="75"
-                 loading="lazy" />
-        </button>
-    </div>
+
+	@* Theme toggle button with duck icon (fixed position in bottom-right) *@
+	<div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+		<button class="btn align-items-center"
+				id="bd-theme"
+				type="button"
+				aria-label="Toggle theme (auto)">
+			<img src="~/duk.png"
+				 alt="Change theme?"
+				 width="75"
+				 height="75"
+				 loading="lazy" />
+		</button>
+	</div>
 </body>
 </html>

@@ -5,18 +5,49 @@
     ViewData["Title"] = "Log out";
 }
 
-<header>
-    <h1 class="display-4">@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Duckmension VS</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container col-10 px-14 py-5 min-vh-10 d-flex align-items-center justify-content-center">
+        <div class="row w-100 g-lg-5">
+            <div class="col-lg-5 mx-auto">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-4 p-md-5 text-center">
+                        @{
+                            if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                                <h1 class="display-5 fw-bold text-body-emphasis mb-3">@ViewData["Title"]</h1>
+                                <p class="lead text-body-secondary mb-4">
+                                    Are you sure you want to log out?
+                                </p>
+                                <form class="d-grid gap-2" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                    <button type="submit" class="btn btn-lg btn-danger">Yes, log me out</button>
+                                    <a href="/" class="btn btn-lg btn-outline-secondary">Cancel</a>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    <h1 class="display-5 fw-bold text-body-emphasis mb-3">Logged Out</h1>
+                                    <p class="lead text-success mb-4">
+                                        You have successfully logged out of the application.
+                                    </p>
+                                    <a href="/" class="btn btn-lg btn-primary">Return Home</a>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

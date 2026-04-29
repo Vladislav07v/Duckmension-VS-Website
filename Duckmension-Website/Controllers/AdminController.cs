@@ -5,12 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Duckmension_Website.Controllers;
 
+/// <summary>
+/// Administrative controller for managing users and their roles.
+/// Restricted to users with Admin or Owner roles only.
+/// </summary>
 [Authorize(Roles = "Admin,Owner")]
 public class AdminController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
+    /// <summary>
+    /// Initializes a new instance of the AdminController with required dependency services.
+    /// </summary>
     public AdminController(UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
@@ -18,12 +25,16 @@ public class AdminController : Controller
         _roleManager = roleManager;
     }
 
-    // 3.1. Списък 
+    /// <summary>
+    /// Displays a list of all users in the system with their current roles.
+    /// Provides an overview for administrators to manage user permissions.
+    /// </summary>
     public async Task<IActionResult> Index()
     {
         var users = _userManager.Users.ToList();
         var model = new List<UserRoleRowViewModel>();
 
+        // Build model with each user's information and their primary role
         foreach (var u in users)
         {
             var roles = await _userManager.GetRolesAsync(u);
@@ -31,14 +42,17 @@ public class AdminController : Controller
             {
                 UserId = u.Id,
                 Email = u.Email ?? u.UserName ?? "(no email)",
-                Role = roles.FirstOrDefault() // приемаме 1 основна роля 
+                Role = roles.FirstOrDefault() // Display primary role (assuming one main role per user)
             });
         }
 
         return View(model);
     }
 
-    // 3.2. Edit (GET) 
+    /// <summary>
+    /// Displays the edit form for changing a user's role assignment.
+    /// GET request to load the user and available roles.
+    /// </summary>
     public async Task<IActionResult> Edit(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
@@ -58,7 +72,11 @@ public class AdminController : Controller
         return View(model);
     }
 
-    // 3.3. Edit (POST) 
+    /// <summary>
+    /// Processes the role assignment change for a user.
+    /// POST request to update the user's primary role in the system.
+    /// Includes security checks to prevent unauthorized role changes.
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditUserRoleViewModel model)
@@ -66,7 +84,7 @@ public class AdminController : Controller
         var user = await _userManager.FindByIdAsync(model.UserId);
         if (user == null) return NotFound();
 
-        // По избор: забрана Owner да сваля собствената си роля 
+        // Security check: Prevent users from removing their own Owner or Admin role
         var currentUserId = _userManager.GetUserId(User);
         if (currentUserId == user.Id && model.SelectedRole != "Owner" || model.SelectedRole != "Admin")
         {
@@ -81,7 +99,7 @@ public class AdminController : Controller
 
         var currentRoles = await _userManager.GetRolesAsync(user);
 
-        // Премахваме всички роли и добавяме избраната (една основна роля) 
+        // Remove all existing roles and assign the new primary role
         if (currentRoles.Any())
         {
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
