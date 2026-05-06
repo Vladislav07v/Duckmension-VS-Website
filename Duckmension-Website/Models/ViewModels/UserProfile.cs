@@ -24,16 +24,16 @@ public class UserProfile
 
     /// <summary>
     /// The number of cookies collected by the user during gameplay.
-    /// Represents the user's primary score metric in Duckmension VS.
-    /// Must be between 1 and 999.
+    /// Incremented by the game via POST /api/game/update-cookies after each match.
+    /// Starts at 0 for new users.
     /// </summary>
-    [Range(1, 999)]
-    public int CookieCount { get; set; }
+    [Range(0, int.MaxValue)]
+    public int Cookies { get; set; } = 0;
 
     /// <summary>
     /// The index of the currently equipped cosmetic hat item.
     /// Range 0-9 represents 10 different hat options.
-    /// 0 might represent no hat or a default hat.
+    /// 0 means no hat / default.
     /// </summary>
     [Range(0, 9)]
     public int CurrentlyWornHat { get; set; }
@@ -44,4 +44,3 @@ public class UserProfile
     /// </summary>
     public List<int> OwnedHats { get; set; } = new List<int>();
 }
-

@@ -19,9 +19,6 @@ public class UserController : Controller
     private readonly ApplicationDbContext _db;
     private readonly UserManager<IdentityUser> _userManager;
 
-    /// <summary>
-    /// Initializes a new instance of the UserController with required dependency services.
-    /// </summary>
     public UserController(ApplicationDbContext db, UserManager<IdentityUser> userManager)
     {
         _db = db;
@@ -36,15 +33,13 @@ public class UserController : Controller
     {
         var userId = _userManager.GetUserId(User)!;
 
-        // Retrieve user profile or create default profile for new users
         var profile = await _db.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         if (profile == null)
         {
-            // Create a default profile for new users to avoid null reference in the view
             profile = new UserProfile
             {
                 UserId = userId,
-                CookieCount = 0,
+                Cookies = 0,
                 CurrentlyWornHat = 0,
                 OwnedHats = new List<int>()
             };
@@ -52,23 +47,20 @@ public class UserController : Controller
             await _db.SaveChangesAsync();
         }
 
-        // Ensure the Identity user is loaded so views can display the username
-        var identityUser = await _userManager.FindByIdAsync(userId);
-        profile.User = identityUser;
+        // Attach the Identity user so the view can show the username
+        profile.User = await _userManager.FindByIdAsync(userId);
 
         return View(profile);
     }
 
     /// <summary>
     /// POST: Updates the user's profile information.
-    /// Validates that the user can only update their own profile.
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(UserProfile model)
     {
         var userId = _userManager.GetUserId(User)!;
-        // Security: Ensure user can only update their own profile
         if (model.UserId != userId) return Forbid();
 
         if (!ModelState.IsValid) return View(model);
@@ -82,17 +74,15 @@ public class UserController : Controller
 
     /// <summary>
     /// POST: Updates the user's display name (username).
-    /// Validates that the new display name is not already taken by another user.
+    /// Validates that the new display name is not already taken.
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateProfile(string UserId, string DisplayName)
     {
         var currentUserId = _userManager.GetUserId(User)!;
-        // Security: Ensure user can only update their own display name
         if (UserId != currentUserId) return Forbid();
 
-        // Validate that display name is not empty
         if (string.IsNullOrWhiteSpace(DisplayName))
         {
             TempData["error"] = "Display name cannot be empty.";
@@ -100,7 +90,6 @@ public class UserController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // Check if another user already has this display name
         var existing = await _userManager.FindByNameAsync(DisplayName);
         if (existing != null && existing.Id != currentUserId)
         {
@@ -112,7 +101,6 @@ public class UserController : Controller
         var user = await _userManager.FindByIdAsync(currentUserId);
         if (user == null) return NotFound();
 
-        // Update the username in Identity
         user.UserName = DisplayName;
         var updateResult = await _userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)
@@ -122,7 +110,6 @@ public class UserController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // Ensure profile exists and is updated
         var profile = await _db.UserProfiles.FirstOrDefaultAsync(p => p.UserId == currentUserId);
         if (profile != null)
         {
@@ -137,17 +124,14 @@ public class UserController : Controller
 
     /// <summary>
     /// POST: Changes the user's password.
-    /// Validates the old password and ensures the new password is confirmed.
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword(string UserId, string OldPassword, string NewPassword, string ConfirmPassword)
     {
         var currentUserId = _userManager.GetUserId(User)!;
-        // Security: Ensure user can only change their own password
         if (UserId != currentUserId) return Forbid();
 
-        // Validate that both old and new passwords are provided
         if (string.IsNullOrWhiteSpace(OldPassword) || string.IsNullOrWhiteSpace(NewPassword))
         {
             TempData["error"] = "Please provide both current and new passwords.";
@@ -155,7 +139,6 @@ public class UserController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // Validate that new password and confirmation match
         if (NewPassword != ConfirmPassword)
         {
             TempData["error"] = "New password and confirmation do not match.";
@@ -166,7 +149,6 @@ public class UserController : Controller
         var user = await _userManager.FindByIdAsync(currentUserId);
         if (user == null) return NotFound();
 
-        // Attempt to change the password
         var result = await _userManager.ChangePasswordAsync(user, OldPassword, NewPassword);
         if (!result.Succeeded)
         {

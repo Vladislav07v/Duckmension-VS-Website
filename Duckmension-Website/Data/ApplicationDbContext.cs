@@ -6,7 +6,8 @@ namespace Duckmension_Website.Data
 {
     /// <summary>
     /// Entity Framework Core database context for the Duckmension VS application.
-    /// Extends IdentityDbContext to include both ASP.NET Core Identity tables and custom application tables.
+    /// Extends IdentityDbContext to include both ASP.NET Core Identity tables
+    /// and custom application tables.
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext
     {
@@ -16,7 +17,7 @@ namespace Duckmension_Website.Data
         public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
 
         /// <summary>
-        /// Initializes a new instance of the ApplicationDbContext with the provided options.
+        /// Initializes a new instance of the ApplicationDbContext.
         /// </summary>
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -25,13 +26,13 @@ namespace Duckmension_Website.Data
 
         /// <summary>
         /// Configures the database schema and relationships between entities.
-        /// Sets up the one-to-one relationship between UserProfile and IdentityUser with cascade delete.
+        /// Sets up the one-to-one relationship between UserProfile and IdentityUser
+        /// with cascade delete so a profile is removed when its user is deleted.
         /// </summary>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Configure relationship: Each UserProfile belongs to exactly one User, and when a user is deleted, their profile is also deleted
             builder.Entity<UserProfile>()
                 .HasOne(p => p.User)
                 .WithOne()

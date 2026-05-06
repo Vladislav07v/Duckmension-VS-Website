@@ -35,7 +35,9 @@
                             </div>
                             <div class="col-md-8">
                                 <h3>@Model?.User?.UserName</h3>
-                                <h5 class="card-text"><img src="cookie.svg" width="64" height="auto" /> X 0</h5>
+                                <div class="cookie-counter">
+                                    <h5 class="card-text"><img src="cookie.svg" width="64" height="auto" /> X 0</h5> @Model.Cookies
+                                </div>
                                 <h5 class="card-text">Hats X 0</h5>
                             </div>
                         </div>
